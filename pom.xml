@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example.bdd</groupId>
+    <artifactId>bdd-angular</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <properties>
+        <openapi-generator.version>5.1.1</openapi-generator.version>
+        <openapi-spec.location>bdd-spec.2022-07/bdd-spec.yml</openapi-spec.location>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>${openapi-generator.version}</version>
+                <executions>
+                    <execution>
+                        <id>code_from_spec</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${openapi-spec.location}</inputSpec>
+                            <generatorName>typescript-angular</generatorName>
+                            <generateApiDocumentation>false</generateApiDocumentation>
+                            <configOptions>
+                                <delegatePattern>true</delegatePattern>
+                                <sourceFolder>src/gen/ts</sourceFolder>
+                                <serializableModel>true</serializableModel>
+                                <useTags>true</useTags>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+        
