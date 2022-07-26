@@ -3,10 +3,10 @@ import { Person, PersonsService } from 'target/generated-sources/openapi';
 
 import { of } from 'rxjs';
 
-import { PersonDetailComponent } from './person-detail.component';
-import { HttpClientModule, HttpResponse, HttpStatusCode } from '@angular/common/http';
+import { HttpResponse, HttpStatusCode } from '@angular/common/http';
+import { TestMinModule } from 'src/modules/test-min.modules';
 import { PersonDetailSpecFixture } from './fixtures/person-detail-spec.fixture';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { PersonDetailComponent } from './person-detail.component';
 
 describe('PersonDetailComponent', () => {
   let component: PersonDetailComponent;
@@ -21,11 +21,9 @@ describe('PersonDetailComponent', () => {
         PersonDetailComponent
       ],
       imports: [
-        HttpClientModule,
-        ReactiveFormsModule
+        TestMinModule
       ],
       providers: [
-        FormBuilder,
         { provide: PersonsService, useValue: spy }
       ]
     })

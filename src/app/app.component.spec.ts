@@ -1,12 +1,19 @@
 import { TestBed } from '@angular/core/testing';
+import { TestMinModule } from 'src/modules/test-min.modules';
 import { AppComponent } from './app.component';
+import { PersonDetailComponent } from './components/person-detail/person-detail.component';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [
-        AppComponent
+        AppComponent,
+
+        PersonDetailComponent
       ],
+      imports: [
+        TestMinModule
+      ]
     }).compileComponents();
   });
 
@@ -20,12 +27,5 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
     expect(app.title).toEqual('bdd-angular.2022-07');
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('bdd-angular.2022-07 app is running!');
   });
 });
