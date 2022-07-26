@@ -1,0 +1,21 @@
+<form [formGroup]="fg" (ngSubmit)="onSubmit()">
+  <input formControlName="searchCriteria" class="searchCriteriaElem">
+  <button type="submit" i18n="@@searchButton" class="searchButtonElem">Search</button>
+</form>
+
+<div *ngIf="responseReceived">
+  <div *ngIf="person; else notFound">
+    <div>
+      <label i18n="@@firstnameLabel">First name</label>:
+      <span class="firstnameElem">{{ person.firstname }}</span>
+    </div>
+    <div>
+      <label i18n="@@lastnameLabel">Last name</label>:
+      <span class="lastnameElem">{{ person.lastname }}</span>
+    </div>
+  </div>
+</div>
+
+<ng-template #notFound>
+  <span class="personNotFoundMessageElem" i18n="@@personNotFound">No person record(s) found.</span>
+</ng-template>
