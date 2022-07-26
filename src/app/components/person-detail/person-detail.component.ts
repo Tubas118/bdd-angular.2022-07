@@ -1,7 +1,5 @@
-import { HttpEvent, HttpResponse } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Observer } from 'rxjs';
 import { Person, PersonsService } from 'target/generated-sources/openapi';
 
 @Component({
@@ -22,8 +20,11 @@ export class PersonDetailComponent implements OnInit {
 
   person: Person | undefined | null;
 
+  personMatches: Person[] | undefined | null;
+
   constructor(private personsService: PersonsService,
-              private formBuilder: FormBuilder) {
+              formBuilder: FormBuilder) {
+
     this.fg = formBuilder.group({
       searchCriteria: ''
     });

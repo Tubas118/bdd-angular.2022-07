@@ -8,7 +8,7 @@ import { HttpClientModule, HttpResponse, HttpStatusCode } from '@angular/common/
 import { PersonDetailSpecFixture } from './fixtures/person-detail-spec.fixture';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 
-describe('PersonDetailComponent', () => {
+fdescribe('PersonDetailComponent', () => {
   let component: PersonDetailComponent;
   let fixture: ComponentFixture<PersonDetailComponent>;
   let personServiceSpy: jasmine.SpyObj<PersonsService>;
@@ -68,9 +68,42 @@ describe('PersonDetailComponent', () => {
     });
   }));
 
+  it('AC-2.1: should display person details on rest get call after submitting personId', waitForAsync(() => {
+    // Given
+    expect(component).toBeTruthy();
+    const mockPersons: Person[] = [{
+      id: 'mock-id-1',
+      firstname: 'mock-first-1',
+      lastname: 'mock-last-1'
+    }, {
+        id: 'mock-id-2',
+        firstname: 'mock-first-2',
+        lastname: 'mock-last-2'
+      }];
+    const mockPersonsResponse = new HttpResponse({
+      body: mockPersons,
+      status: HttpStatusCode.Ok
+    });
+    personServiceSpy.searchPersons.and.returnValue(of(mockPersonsResponse));
+
+    // When
+    component.fg.controls['searchCriteria'].setValue(mockPerson.id);
+    fixture.detectChanges();
+
+    component.onSubmit();
+    fixture.detectChanges();
+
+    // Then
+    fixture.whenStable().then(() => {
+      expect(elements.firstname.nativeElement.textContent?.trim()).toEqual(component?.person?.firstname);
+      expect(elements.lastname.nativeElement.textContent?.trim()).toEqual(component?.person?.lastname);
+      expect(elements.personNotFoundMessage.nativeElement).toBeFalsy();
+    });
+  }));
+
   [undefined, null].forEach((mockPerson) => {
 
-    fit(`AC-2.3: should display not found message when person: ${mockPerson}`, waitForAsync(() => {
+    it(`AC-2.3: should display not found message when person: ${mockPerson}`, waitForAsync(() => {
       // Given
       const mockPersonResponse = new HttpResponse({
         body: mockPerson as unknown as Person,
