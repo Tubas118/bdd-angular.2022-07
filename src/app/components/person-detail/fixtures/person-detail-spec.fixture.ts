@@ -7,9 +7,13 @@ export class PersonDetailSpecFixture extends BaseSpecFixture<PersonDetailCompone
 
   readonly searchButton = new ButtonElementByClassName('.searchButtonElem', this);
 
+  readonly personDetailsPanel = new ElementByClassName('.personDetailsElim', this);
+
   readonly firstname = new ElementByClassName('.firstnameElem', this);
 
   readonly lastname = new ElementByClassName('.lastnameElem', this);
+
+  readonly matchedPersonsList = new ElementByClassName('.matchedPersonsListElem', this);
 
   readonly personNotFoundMessage = new ElementByClassName('.personNotFoundMessageElem', this);
 

@@ -1,5 +1,7 @@
+import { HttpStatusCode } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 import { Person, PersonsService } from 'target/generated-sources/openapi';
 
 @Component({
@@ -35,12 +37,24 @@ export class PersonDetailComponent implements OnInit {
     this.responseReceived = false;
   }
 
+  onSelectPerson(personId: string): void {
+
+  }
+
   onSubmit(): void {
     this.criteriaSubmitted = this.fg.controls['searchCriteria'].value;
-    this.personsService.getPerson(this.criteriaSubmitted, 'response').subscribe(response => {
-      console.log(`onSubmit result: ${JSON.stringify(response?.body)}`);
+    forkJoin({
+      personResponse: this.personsService.getPerson(this.criteriaSubmitted, 'response'),
+      matchPersonsResponse: this.personsService.fuzzySearchPersons(this.criteriaSubmitted, 'response')
+    })
+    .subscribe(data => {
+      if (HttpStatusCode.Ok === data?.personResponse?.status) {
+        this.person = data.personResponse.body;
+      }
+      else if (HttpStatusCode.Ok === data?.matchPersonsResponse?.status) {
+        this.personMatches = data.matchPersonsResponse.body;
+      }
       this.responseReceived = true;
-      this.person = response?.body;
     });
   }
 

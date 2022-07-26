@@ -4,7 +4,7 @@
 </form>
 
 <div *ngIf="responseReceived">
-  <div *ngIf="person; else notFound">
+  <div *ngIf="person; else personMatchList" class="personDetailsElim">
     <div>
       <label i18n="@@firstnameLabel">First name</label>:
       <span class="firstnameElem">{{ person.firstname }}</span>
@@ -15,6 +15,14 @@
     </div>
   </div>
 </div>
+
+<ng-template #personMatchList>
+  <div *ngIf="personMatches; else notFound" class="matchedPersonsListElem">
+    <ul *ngFor="let person of personMatches">
+      <li><button type="menu" (click)="onSelectPerson(person.id)">{{person.lastname}}, {{person.firstname}}</button></li>
+    </ul>
+  </div>
+</ng-template>
 
 <ng-template #notFound>
   <span class="personNotFoundMessageElem" i18n="@@personNotFound">No person record(s) found.</span>

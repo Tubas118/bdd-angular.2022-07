@@ -8,14 +8,14 @@ import { HttpClientModule, HttpResponse, HttpStatusCode } from '@angular/common/
 import { PersonDetailSpecFixture } from './fixtures/person-detail-spec.fixture';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 
-fdescribe('PersonDetailComponent', () => {
+describe('PersonDetailComponent', () => {
   let component: PersonDetailComponent;
   let fixture: ComponentFixture<PersonDetailComponent>;
   let personServiceSpy: jasmine.SpyObj<PersonsService>;
   let elements: PersonDetailSpecFixture;
 
   beforeEach(async () => {
-    const spy = jasmine.createSpyObj('PersonService', ['getPerson']);
+    const spy = jasmine.createSpyObj('PersonService', ['getPerson','fuzzySearchPersons']);
     await TestBed.configureTestingModule({
       declarations: [
         PersonDetailComponent
@@ -49,9 +49,13 @@ fdescribe('PersonDetailComponent', () => {
     };
     const mockPersonResponse = new HttpResponse({
       body: mockPerson,
-      status: HttpStatusCode.Ok
+      status: HttpStatusCode.Ok,
+      statusText: HttpStatusCode.Ok.toString()
     });
     personServiceSpy.getPerson.and.returnValue(of(mockPersonResponse));
+
+    // And
+    personServiceSpy.fuzzySearchPersons.and.returnValue(of(mockPersonsResponse));
 
     // When
     component.fg.controls['searchCriteria'].setValue(mockPerson.id);
@@ -62,15 +66,19 @@ fdescribe('PersonDetailComponent', () => {
 
     // Then
     fixture.whenStable().then(() => {
+      expect(elements.personDetailsPanel.nativeElement).toBeTruthy();
       expect(elements.firstname.nativeElement.textContent?.trim()).toEqual(component?.person?.firstname);
       expect(elements.lastname.nativeElement.textContent?.trim()).toEqual(component?.person?.lastname);
       expect(elements.personNotFoundMessage.nativeElement).toBeFalsy();
     });
   }));
 
-  it('AC-2.1: should display person details on rest get call after submitting personId', waitForAsync(() => {
+  it('AC-2.2: should display person details on rest get call after submitting fuzzy value', waitForAsync(() => {
     // Given
     expect(component).toBeTruthy();
+    personServiceSpy.getPerson.and.returnValue(of(mockPersonNotFoundResponse));
+
+    // And
     const mockPersons: Person[] = [{
       id: 'mock-id-1',
       firstname: 'mock-first-1',
@@ -82,12 +90,13 @@ fdescribe('PersonDetailComponent', () => {
       }];
     const mockPersonsResponse = new HttpResponse({
       body: mockPersons,
-      status: HttpStatusCode.Ok
+      status: HttpStatusCode.Ok,
+      statusText: HttpStatusCode.Ok.toString()
     });
-    personServiceSpy.searchPersons.and.returnValue(of(mockPersonsResponse));
+    personServiceSpy.fuzzySearchPersons.and.returnValue(of(mockPersonsResponse));
 
     // When
-    component.fg.controls['searchCriteria'].setValue(mockPerson.id);
+    component.fg.controls['searchCriteria'].setValue('search');
     fixture.detectChanges();
 
     component.onSubmit();
@@ -95,8 +104,8 @@ fdescribe('PersonDetailComponent', () => {
 
     // Then
     fixture.whenStable().then(() => {
-      expect(elements.firstname.nativeElement.textContent?.trim()).toEqual(component?.person?.firstname);
-      expect(elements.lastname.nativeElement.textContent?.trim()).toEqual(component?.person?.lastname);
+      expect(elements.personDetailsPanel.nativeElement).toBeFalsy();
+      expect(elements.matchedPersonsList.nativeElement).toBeTruthy();
       expect(elements.personNotFoundMessage.nativeElement).toBeFalsy();
     });
   }));
@@ -107,9 +116,13 @@ fdescribe('PersonDetailComponent', () => {
       // Given
       const mockPersonResponse = new HttpResponse({
         body: mockPerson as unknown as Person,
-        status: HttpStatusCode.Ok
+        status: HttpStatusCode.NotFound,
+        statusText: HttpStatusCode.NotFound.toString(),
       });
       personServiceSpy.getPerson.and.returnValue(of(mockPersonResponse));
+
+      // And
+      personServiceSpy.fuzzySearchPersons.and.returnValue(of(mockPersonsResponse));
 
       // When
       component.fg.controls['searchCriteria'].setValue('you will not find me');
@@ -128,3 +141,14 @@ fdescribe('PersonDetailComponent', () => {
   });
 });
 
+const mockPersonNotFoundResponse = new HttpResponse({
+  body: { id: '-999999' },
+  status: HttpStatusCode.NotFound,
+  statusText: HttpStatusCode.NotFound.toString()
+});
+
+const mockPersonsResponse = new HttpResponse({
+  body: [],
+  status: HttpStatusCode.NotFound,
+  statusText: HttpStatusCode.NotFound.toString()
+});
