@@ -1,3 +1,5 @@
+To properly checkout this file, run `git clone --recurse-submodules https://github.com/Tubas118/bdd-angular.2022-07`
+
 # BddAngular.202207
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.3.3.
